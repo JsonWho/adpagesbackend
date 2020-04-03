@@ -19,7 +19,10 @@ const ProfileDetailsSchema = new mongoose.Schema({
   background: {
     type: String
   },
-  Description: {
+  bodytype: {
+    type: String
+  },
+  description: {
     type: Object
   },
   updated_date: {

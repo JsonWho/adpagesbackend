@@ -37,16 +37,23 @@ router.post('/', (req, res) => {
     .catch(err => res.status(400).json({ error: 'Unable to add this Listing' }));
 });
 
+router.get('/uploadthumbs/:filename', (req, res) => {
 
+  let filePath = __dirname + '/uploads/' + req.params.filename;
+  res.sendFile(filePath);
+});
 
 router.post('/imgupload', (req,res)=> {
 
-  new formidable.IncomingForm().parse(req)
+  new formidable.IncomingForm({maxFileSize:(2400 * 1024 * 1024)}).parse(req)
     .on('fileBegin', (name, file) => {
-        file.path = __dirname + '/uploads/' + file.name
+        file.path = __dirname + '/uploads/' + file.name;
+        // res.status(200).json({success: 'uploaded successfully1'});
+
     })
     .on('file', (name, file) => {
-      console.log('Uploaded file', name, file)
+      console.log('Uploaded file', name, file);
+      res.status(200).json({success: 'uploaded successfully'});
     });
 
 

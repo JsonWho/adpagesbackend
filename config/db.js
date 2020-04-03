@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const config = require('config');
-const mongoDB = 'mongodb://adpages:Sputnik@127.0.0.1:27017/adultpages'
+const mongoDB = 'mongodb://127.0.0.1:27017/adultpages'
+// const mongoDB = 'mongodb://adpages:Sputnik@127.0.0.1:27017/adultpages'
 
 
 const connectDB = async () => {

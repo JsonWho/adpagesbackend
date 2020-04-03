@@ -43,6 +43,9 @@ const ListingSchema = new mongoose.Schema({
       background: {
         type: Object
       },
+      bodytype: {
+        type: String
+      },
       
       description: mongoose.Mixed
 
