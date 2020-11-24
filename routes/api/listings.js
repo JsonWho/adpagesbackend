@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const formidable = require('formidable');
+const fs = require('fs');
 
 // Load Listing model
 const Listing = require('../../models/Listing');
@@ -37,17 +38,34 @@ router.post('/', (req, res) => {
     .catch(err => res.status(400).json({ error: 'Unable to add this Listing' }));
 });
 
-router.get('/uploadthumbs/:filename', (req, res) => {
+router.get('/profiledata/:accountid/:tempdata?/:pid/:filename', (req, res) => {
 
-  let filePath = __dirname + '/uploads/' + req.params.filename;
+  let filePath = '';
+  if(!req.params.tempdata) 
+  filePath = __dirname + '/resources/profiledata/'+ req.params.accountid +'/' + req.params.pid + '/' + req.params.filename 
+  else filePath = __dirname + '/resources/profiledata/'+ req.params.accountid + '/tempdata/'+ req.params.pid + '/' + req.params.filename;
+
   res.sendFile(filePath);
 });
 
-router.post('/imgupload', (req,res)=> {
+router.post('/mediaupload/:accountid/:pid', (req,res)=> {
 
   new formidable.IncomingForm({maxFileSize:(2400 * 1024 * 1024)}).parse(req)
     .on('fileBegin', (name, file) => {
-        file.path = __dirname + '/uploads/' + file.name;
+
+        let path = __dirname + '/resources/profiledata/'+ req.params.accountid +'/tempdata/'+ req.params.pid +'/';
+
+        if(fs.existsSync(path)) {
+        file.path = path+file.name; 
+        } 
+        else 
+        {
+          fs.mkdirSync(path,null);
+          file.path = path+file.name;
+          
+        }
+       
+
         // res.status(200).json({success: 'uploaded successfully1'});
 
     })
@@ -55,6 +73,28 @@ router.post('/imgupload', (req,res)=> {
       console.log('Uploaded file', name, file);
       res.status(200).json({success: 'uploaded successfully'});
     });
+
+
+});
+
+
+
+router.delete('/deletemedia/:accountid/:pid/:filename', (req, res) => {
+
+  let accountid = req.params.accountid;
+  let pid = req.params.pid;
+  let fileName = req.params.filename;
+  let inTemp = req.query.intemp === 'false' ? false : true;
+
+
+
+  let path = __dirname + '/resources/profiledata/'+ accountid + (inTemp ? '/tempdata/' + pid : '/' + pid) + '/' + fileName;
+  
+
+  fs.unlink(path, (err) => {
+    if (err) throw err;
+    res.status(202).json({success: 'belissimo!'});
+  });
 
 
 });
